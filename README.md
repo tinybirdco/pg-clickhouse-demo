@@ -1,14 +1,14 @@
 # pg_clickhouse → Tinybird bridge
 
-> **Example repository — provided as-is, not actively maintained.** A working
-> starting point for connecting Postgres-only BI tools (Amazon QuickSight,
+> **Example repository — provided as-is, <ins>not actively maintained or supported by Tinybird</ins>.**
+> A working starting point for connecting Postgres-only BI tools (Amazon QuickSight,
 > Metabase OSS, Looker Studio, ...) to [Tinybird](https://www.tinybird.co) via
 > the [`pg_clickhouse`](https://github.com/ClickHouse/pg_clickhouse) Foreign
 > Data Wrapper. Adapt it freely; issues and PRs are welcome but no support is
 > guaranteed.
 
 A small docker-compose stack that runs `pg_clickhouse` inside Postgres 18 and
-points it at Tinybird's [ClickHouse-compatible HTTP interface](https://www.tinybird.co/docs/forward/work-with-data/publish-data/clickhouse-interface).
+points it at Tinybird's [ClickHouse®-compatible HTTP interface](https://www.tinybird.co/docs/forward/work-with-data/publish-data/clickhouse-interface).
 
 The motivating use case is **Amazon QuickSight**, which only speaks Postgres.
 Pointing QuickSight at this bridge lets it issue SQL that the FDW transparently
