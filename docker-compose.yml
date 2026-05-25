@@ -1,0 +1,33 @@
+services:
+  # Postgres 18 with pg_clickhouse FDW preinstalled.
+  # See: https://github.com/ClickHouse/pg_clickhouse
+  postgres:
+    image: ghcr.io/clickhouse/pg_clickhouse:18
+    container_name: pg_clickhouse_poc
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-tinybird_bridge}
+      # Exposed to init scripts via the postgres env.
+      TB_HOST: ${TB_HOST:?Set TB_HOST in .env, e.g. clickhouse.us-east.aws.tinybird.co}
+      TB_WORKSPACE: ${TB_WORKSPACE:?Set TB_WORKSPACE in .env (your workspace name)}
+      TB_TOKEN: ${TB_TOKEN:?Set TB_TOKEN in .env (an admin or read-scoped token)}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      # Files in /docker-entrypoint-initdb.d run once on the first container start.
+      # If you change them later, run `docker compose down -v` first.
+      - ./init:/docker-entrypoint-initdb.d:ro
+      # Postgres 18 stores data under /var/lib/postgresql/<major>/...
+      # Mounting at /var/lib/postgresql (not /data) avoids the entrypoint's
+      # "unused mount/volume" check; see docker-library/postgres#1259.
+      - pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-tinybird_bridge}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  pgdata:
